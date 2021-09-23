@@ -5,6 +5,8 @@ const USER_ARGV_INDEX = 2;
 const TITLES_PATH = `./data/titles.txt`;
 const SENTENCES_PATH = `./data/sentences.txt`;
 const CATEGORIES_PATH = `./data/categories.txt`;
+const COMMENTS_PATH = `./data/comments.txt`;
+
 const SumRestrict = {
   MIN: 1000,
   MAX: 100000,
@@ -41,11 +43,16 @@ const HttpCode = {
   UNAUTHORIZED: 401,
 };
 
+const MAX_ID_LENGTH = 6;
+
+const MAX_COMMENTS = 4;
+
 module.exports = {
   USER_ARGV_INDEX,
   TITLES_PATH,
   SENTENCES_PATH,
   CATEGORIES_PATH,
+  COMMENTS_PATH,
   SumRestrict,
   OfferType,
   PictureRestrict,
@@ -55,6 +62,8 @@ module.exports = {
   COUNT,
   EXIT_CODES,
   DEFAULT_PORT,
-  HttpCode
+  HttpCode,
+  MAX_ID_LENGTH,
+  MAX_COMMENTS,
 };
 
