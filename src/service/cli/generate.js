@@ -4,6 +4,7 @@ const {
   TITLES_PATH,
   SENTENCES_PATH,
   CATEGORIES_PATH,
+  COMMENTS_PATH,
   SumRestrict,
   OfferType,
   DEFAULT_COUNT,
@@ -11,10 +12,13 @@ const {
   PictureRestrict,
   COUNT,
   EXIT_CODES,
+  MAX_ID_LENGTH,
+  MAX_COMMENTS,
 } = require(`../constants`);
 
 const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
+const {nanoid} = require(`nanoid`);
 
 const {getRandomInt, shuffle} = require(`../../utils`);
 
@@ -22,10 +26,20 @@ const getPictureFileName = () => {
   return `item${getRandomInt(PictureRestrict.MIN, PictureRestrict.MAX)}.jpg`;
 };
 
-const generateOffers = (count, categories, sentences, titles) =>
+const generateComments = (count, comments) => (
+  Array(count).fill({}).map(() => ({
+    id: nanoid(MAX_ID_LENGTH),
+    text: shuffle(comments)
+      .slice(0, getRandomInt(1, 3))
+      .join(` `),
+  }))
+);
+
+const generateOffers = (count, categories, sentences, titles, comments) =>
   Array(count)
     .fill({})
     .map(() => ({
+      id: nanoid(MAX_ID_LENGTH),
       category: [categories[getRandomInt(0, categories.length - 1)]],
       description: shuffle(sentences).slice(1, 5).join(` `),
       picture: getPictureFileName(),
@@ -36,6 +50,7 @@ const generateOffers = (count, categories, sentences, titles) =>
         ]
       ],
       sum: getRandomInt(SumRestrict.MIN, SumRestrict.MAX),
+      comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments),
     }));
 
 const readContent = async (filePath) => {
@@ -59,9 +74,10 @@ module.exports = {
     const categories = await readContent(CATEGORIES_PATH);
     const sentences = await readContent(SENTENCES_PATH);
     const titles = await readContent(TITLES_PATH);
+    const comments = await readContent(COMMENTS_PATH);
 
     const countOffer = Number.parseInt(COUNT, 10) || DEFAULT_COUNT;
-    const content = JSON.stringify(generateOffers(countOffer, categories, sentences, titles));
+    const content = JSON.stringify(generateOffers(countOffer, categories, sentences, titles, comments));
 
     try {
       await fs.writeFile(FILE_NAME, content);
